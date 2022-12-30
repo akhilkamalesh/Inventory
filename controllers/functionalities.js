@@ -2,7 +2,7 @@ const functionalities = require('../controllers/functionalities');
 const Inventory = require('../schemas/inventory');
 
 /*
-    @desc findInvetory finds the inventory based on req.body.type in the mongoose inventory database
+    @desc findInvetory finds the inventory based on req.params.name in the mongoose inventory database
 */
 
 exports.findInventory = async (req, res, next) => {
@@ -11,13 +11,10 @@ exports.findInventory = async (req, res, next) => {
     console.log("find inventory called");
 
     try {
-        const inventory = await Inventory.findById(req.params.id);
 
-        console.log(req.params);
+        const query = {"name": req.params.name};
 
-        const inventory1 = await Inventory.find({"name": req.params.body});
-
-        console.log(inventory1);
+        const inventory = await Inventory.findOne(query);
 
         if(!inventory){
             return res.status(400).json({success: false, message: "not found"});
@@ -30,6 +27,35 @@ exports.findInventory = async (req, res, next) => {
         return res.status(400).json({sucess: false, message: `error was found ${err}`});
     }
 }
+
+/*
+    @desc findPID finds the inventory based on req.params.pid in the mongoose inventory database
+*/
+
+exports.findInventoryPID = async (req, res, next) => {
+
+    // Console logging for dev
+    console.log("find inventory called");
+
+    try {
+
+        const query = {"hokiePID": req.params.pid};
+
+        const inventory = await Inventory.findOne(query);
+
+        if(!inventory){
+            return res.status(400).json({success: false, message: "not found"});
+        }
+
+        
+        return res.status(200).json({success: true, body: inventory});
+    } catch (err) {
+        
+        return res.status(400).json({sucess: false, message: `error was found ${err}`});
+    }
+}
+
+
 
 exports.findAll = async (req, res, next) => {
 
@@ -49,6 +75,17 @@ exports.createInventory = async (req, res, next) => {
     console.log("create inventory called");
 
     try {
+
+        const query = {"name": req.body.name}
+
+        // Making sure there are no duplicate documents
+        if(Inventory.findOne(query)){
+            return res.status(400).json({
+                success: false,
+                message: "object is already in database. Only need to update or delete"
+            });
+        }
+
         const inventory = await Inventory.create(req.body);
 
         // send 201 since we are creating an entity
