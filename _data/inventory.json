@@ -1,0 +1,9 @@
+[
+    {
+        "type": "sample",
+        "name": "samplename",
+        "hokiePID": "samplePID",
+        "quantity": 1,
+        "location": "Dur195"
+    }
+]
