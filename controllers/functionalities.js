@@ -9,7 +9,7 @@ const Inventory = require('../schemas/inventory');
 exports.findInventory = async (req, res, next) => {
 
     // Console logging for dev
-    console.log("find inventory called");
+    console.log("find inventory called".blue);
 
     try {
 
@@ -60,14 +60,15 @@ exports.findAll = async (req, res, next) => {
 
 exports.createInventory = async (req, res, next) => {
 
-    console.log("create inventory called");
+    console.log("create inventory called".blue);
 
     try {
 
         const query = {"name": req.body.name}
 
         // Making sure there are no duplicate documents
-        if(Inventory.findOne(query)){
+        if(await Inventory.findOne(query)){
+            
             return res.status(400).json({
                 success: false,
                 message: "object is already in database. Only need to update or delete"
@@ -94,7 +95,7 @@ exports.createInventory = async (req, res, next) => {
 */
 exports.updateInventory = async (req, res, next) => {
 
-    console.log("update inventory called");
+    console.log("update inventory called".blue);
 
     try {
         // Grabs the inventory we want to update
@@ -127,7 +128,7 @@ exports.updateInventory = async (req, res, next) => {
 */
 exports.deleteInventory = async(req, res, next) => {
 
-    console.log("delete inventory is called");
+    console.log("delete inventory is called".blue);
 
     try {
 
