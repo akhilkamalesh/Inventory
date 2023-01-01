@@ -3,6 +3,7 @@ const Inventory = require('../schemas/inventory');
 
 /*
     @desc findInvetory finds the inventory based on req.params.name in the mongoose inventory database
+    Can be searched either with hokiePID or with name
 */
 
 exports.findInventory = async (req, res, next) => {
@@ -14,14 +15,24 @@ exports.findInventory = async (req, res, next) => {
 
         const query = {"name": req.params.name};
 
+        const query2 = {"hokiePID": req.params.name};
+
         const inventory = await Inventory.findOne(query);
 
-        if(!inventory){
+        const inventoryPID = await Inventory.findOne(query2);
+
+        if(!inventory && !inventoryPID){
             return res.status(400).json({success: false, message: "not found"});
         }
 
-        
-        return res.status(200).json({success: true, body: inventory});
+        if(inventory){
+            return res.status(200).json({success: true, body: inventory}); 
+        }
+
+        if(inventoryPID){
+            return res.status(200).json({success: true, body: inventoryPID});
+        }
+
     } catch (err) {
         
         return res.status(400).json({sucess: false, message: `error was found ${err}`});
@@ -29,34 +40,8 @@ exports.findInventory = async (req, res, next) => {
 }
 
 /*
-    @desc findPID finds the inventory based on req.params.pid in the mongoose inventory database
+    @desc findAll returns all the inventory objects in the Inventory collection
 */
-
-exports.findInventoryPID = async (req, res, next) => {
-
-    // Console logging for dev
-    console.log("find inventory called");
-
-    try {
-
-        const query = {"hokiePID": req.params.pid};
-
-        const inventory = await Inventory.findOne(query);
-
-        if(!inventory){
-            return res.status(400).json({success: false, message: "not found"});
-        }
-
-        
-        return res.status(200).json({success: true, body: inventory});
-    } catch (err) {
-        
-        return res.status(400).json({sucess: false, message: `error was found ${err}`});
-    }
-}
-
-
-
 exports.findAll = async (req, res, next) => {
 
     try {
@@ -69,6 +54,9 @@ exports.findAll = async (req, res, next) => {
 
 }
 
+/* 
+    @desc createInventory creates the inventory based on what gets passed in the body
+*/
 
 exports.createInventory = async (req, res, next) => {
 
@@ -101,12 +89,14 @@ exports.createInventory = async (req, res, next) => {
     }
 }
 
+/*
+    @desc updates the inventory based on what is passed in in req.params.id and what get's passed into the body
+*/
 exports.updateInventory = async (req, res, next) => {
 
     console.log("update inventory called");
 
     try {
-
         // Grabs the inventory we want to update
         // Using the body is updates those specific criteria
         // Body in postman should be in JSON
@@ -132,14 +122,22 @@ exports.updateInventory = async (req, res, next) => {
     }
 }
 
+/*
+    @desc deletes inventory based on id passed in req.params.id
+*/
 exports.deleteInventory = async(req, res, next) => {
 
     console.log("delete inventory is called");
 
     try {
 
-        const inventory = Inventory.findByIdAndDelete(req.params.id);
+        const inventory = await Inventory.findByIdAndDelete(req.params.id);
         
+
+        if(inventory){
+            console.log(inventory);
+        }
+
         if(!inventory){
             res.status(404).json({
                 success: false,

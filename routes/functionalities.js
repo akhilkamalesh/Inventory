@@ -18,8 +18,4 @@ router.route('/:name')
     .get(findInventory)
     .put(updateInventory);
 
-// FindPID needs the pid passed in from req.params
-router.route('/:pid')
-    .get(findInventoryPID);
-
 module.exports = router;
