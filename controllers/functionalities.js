@@ -1,5 +1,6 @@
 const functionalities = require('../controllers/functionalities');
 const Inventory = require('../schemas/inventory');
+const ErrorResponse = require('../utils/ErrorResponse');
 
 /*
     @desc findInvetory finds the inventory based on req.params.name in the mongoose inventory database
@@ -22,7 +23,9 @@ exports.findInventory = async (req, res, next) => {
         const inventoryPID = await Inventory.findOne(query2);
 
         if(!inventory && !inventoryPID){
-            return res.status(400).json({success: false, message: "not found"});
+
+            return res.status(400).json({success: false, body: "inventory was not found"}); 
+
         }
 
         if(inventory){
@@ -35,7 +38,7 @@ exports.findInventory = async (req, res, next) => {
 
     } catch (err) {
         
-        return res.status(400).json({sucess: false, message: `error was found ${err}`});
+        next(new ErrorResponse(`error was found ${err}`, 400));
     }
 }
 
@@ -48,8 +51,12 @@ exports.findAll = async (req, res, next) => {
         const inventories = await Inventory.find();
 
         res.status(200).json({sucess: true,  total: inventories.length, data: inventories});
-    } catch (error) {
-        res.status(400).json({sucess: false});
+
+    } catch (err) {
+
+        next(new ErrorResponse(`Error was ${err}`, 400))
+        //res.status(400).json({sucess: false});
+
     }
 
 }
@@ -68,7 +75,7 @@ exports.createInventory = async (req, res, next) => {
 
         // Making sure there are no duplicate documents
         if(await Inventory.findOne(query)){
-            
+
             return res.status(400).json({
                 success: false,
                 message: "object is already in database. Only need to update or delete"
@@ -82,11 +89,11 @@ exports.createInventory = async (req, res, next) => {
             success: true,
             data: inventory
         });
+
     } catch (err) {
-        res.status(400).json({
-            success: false,
-            message: `error = ${err}`
-        });   
+
+        next(new ErrorResponse(`Error was ${err}`, 400));
+
     }
 }
 
@@ -116,10 +123,9 @@ exports.updateInventory = async (req, res, next) => {
         res.status(200).json({sucess: true, data: inventory});
         
     } catch (err) {
-        res.status(400).json({
-            success: false,
-            message: `error = ${err}`
-        });   
+        
+        next(new ErrorResponse(`Error was ${err}`, 400))
+ 
     }
 }
 
@@ -150,10 +156,8 @@ exports.deleteInventory = async(req, res, next) => {
         
     } catch (err) {
 
-        res.status(400).json({
-            success: false,
-            message: `error = ${err}`
-        });   
+        next(new ErrorResponse(`Error was ${err}`, 400))
+
     }
 
 }
