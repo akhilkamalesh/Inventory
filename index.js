@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/error');
 const colors = require('colors');
+const logger = require('./middleware/logger');
 
 dotenv.config({path: './config/config.env'});
 
@@ -14,6 +15,9 @@ const app = express();
 
 // Body Parser
 app.use(express.json());
+
+// Logger
+app.use(logger);
 
 // Grabbing router
 const functionalities = require('./routes/functionalities');
