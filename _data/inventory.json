@@ -1,8 +1,43 @@
 [
     {
         "type": "sample",
-        "name": "samplename",
+        "name": "samplename1",
         "hokiePID": "samplePID",
+        "quantity": 1,
+        "location": "Dur195"
+    },
+    {
+        "type": "sample",
+        "name": "samplename2",
+        "hokiePID": "samplePID",
+        "quantity": 1,
+        "location": "Dur195"
+    },
+    {
+        "type": "sample",
+        "name": "samplename3",
+        "hokiePID": "samplePID",
+        "quantity": 1,
+        "location": "Dur195"
+    },
+    {
+        "type": "sample",
+        "name": "samplename4",
+        "hokiePID": "samplePID",
+        "quantity": 1,
+        "location": "Dur195"
+    },
+    {
+        "type": "sample",
+        "name": "samplename5",
+        "hokiePID": "samplePID",
+        "quantity": 1,
+        "location": "Dur195"
+    },
+    {
+        "type": "other",
+        "name": "othername",
+        "hokiePID": "otherPID",
         "quantity": 1,
         "location": "Dur195"
     }

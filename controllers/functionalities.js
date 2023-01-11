@@ -5,33 +5,51 @@ const asyncHandler = require('../middleware/async');
 
 /*
     @desc findInvetory finds the inventory based on req.params.name in the mongoose inventory database
-    Can be searched either with hokiePID or with name
+    Can be searched with name
+    @route /api/v1/inventory/:name/name
 */
 
-exports.findInventory = asyncHandler(async (req, res, next) => {
+exports.findInventoryByName = asyncHandler(async (req, res, next) => {
 
     // Console logging for dev
-    console.log("find inventory called".blue);
+    console.log("find inventory by name called".blue);
 
 
         const query = {"name": req.params.name};
-
-        const query2 = {"hokiePID": req.params.name};
-
-        const inventory = await Inventory.findOne(query);
-
-        const inventoryPID = await Inventory.findOne(query2);
+        const inventory = await Inventory.find(query);
 
         // With any error, return next to call the next piece of middleware
         // since errors are now handles with middleware
-        if(!inventory && !inventoryPID){
-
+        if(!inventory){
             return next(new ErrorResponse(`Inventory was not found with query of ${req.params.name}`, 404)); 
-
         }
 
         if(inventory){
             return res.status(200).json({success: true, body: inventory}); 
+        }
+});
+
+/*
+    @desc findInvetory finds the inventory based on req.params.pid in the mongoose inventory database
+    Can be searched with hokiePID
+    @route /api/v1/inventory/:pid/PID
+*/
+
+exports.findInventoryByPID = asyncHandler(async (req, res, next) => {
+
+    // Console logging for dev
+    console.log("find inventory by PID called".blue);
+
+
+        const query2 = {"hokiePID": req.params.pid};
+        const inventoryPID = await Inventory.find(query2);
+
+        // With any error, return next to call the next piece of middleware
+        // since errors are now handles with middleware
+        if(!inventoryPID){
+
+            return next(new ErrorResponse(`Inventory was not found with query of ${req.params.pid}`, 404)); 
+
         }
 
         if(inventoryPID){
@@ -44,9 +62,9 @@ exports.findInventory = asyncHandler(async (req, res, next) => {
 */
 exports.findAll = asyncHandler(async (req, res, next) => {
 
-    const inventories = await Inventory.find();
-
-    res.status(200).json({sucess: true,  total: inventories.length, data: inventories});
+    // Don't need this line anymore since we have advancedMiddleware running our query now
+    // const inventories = await Inventory.find();
+    res.status(200).json(res.advancedResults);
 
 });
 
@@ -61,8 +79,8 @@ exports.createInventory = asyncHandler(async (req, res, next) => {
 
     const query = {"name": req.body.name}
 
-    // Making sure there are no duplicate documents
-    if(await Inventory.findOne(query)){
+    // Making sure there are no duplicate documents since the _id can be different
+    if(await Inventory.find(query)){
 
         return next(new ErrorResponse(`Inventory is already in system`, 404))
     }
@@ -109,7 +127,6 @@ exports.deleteInventory = asyncHandler(async(req, res, next) => {
 
     const inventory = await Inventory.findByIdAndDelete(req.params.id);
     
-
     if(inventory){
         console.log(inventory);
     }
