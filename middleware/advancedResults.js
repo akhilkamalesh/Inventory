@@ -40,7 +40,7 @@ const advancedResults = (model) => async (req, res, next) => {
         const sortBy = req.query.sort.split(',').join(' ');
         query = query.sort(sortBy);
     }else{
-        query = query.sort('-name');
+        query = query.sort('name');
     }
 
     // Pagination

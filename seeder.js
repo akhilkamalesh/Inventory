@@ -1,3 +1,7 @@
+/*
+    Seeds through a JSON file then adds the documents (items) from the JSON file into mongoose database
+*/
+
 const fs = require('fs');
 const mongoose = require('mongoose');
 const colors = require('colors');
@@ -18,13 +22,13 @@ mongoose.connect("mongodb://localhost:27017/inventory", {
 });
 
 // Read JSON Files
-// Main method that converts the 
+// Main method that converts the the JSON from the inventory.json to inventories
 const inventories = JSON.parse(fs.readFileSync(`${__dirname}/_data/inventory.json`, 'utf-8'));
 
 // Import into DB
 const importData = async() => {
     try{
-        await Inventory.create(inventories);
+        await Inventory.create(inventories); // Creates inventory based on inventories
         console.log('Data Imported....'.green.inverse)
         process.exit();
     } catch(err){
