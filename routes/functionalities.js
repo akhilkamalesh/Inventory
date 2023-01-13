@@ -5,24 +5,25 @@ const {findInventoryByName, findInventoryByPID, findAll, createInventory, update
 
 const Inventory = require('../schemas/inventory');
 const advancedResults = require('../middleware/advancedResults');
+const { protect, authorize } = require('../middleware/Auth');
 
 
 // Need id to be delete and update from system
 // Can find id by using find with name or hokiePID
 router.route('/:id')
-    .put(updateInventory)
-    .delete(deleteInventory);
+    .put(protect, authorize('admin'), updateInventory)
+    .delete(protect, authorize('admin'), deleteInventory);
 
 // Create and findAll do not need a parameter
 router.route('/')
-    .post(createInventory)
-    .get(advancedResults(Inventory), findAll);
+    .post(protect, authorize('admin'), createInventory)
+    .get(protect, advancedResults(Inventory), findAll);
 
 // findInventory need the name passed in from req.params
 router.route('/:name/name')
-    .get(findInventoryByName);
+    .get(protect, findInventoryByName);
 
 router.route('/:pid/PID')
-    .get(findInventoryByPID);
+    .get(protect, findInventoryByPID);
 
 module.exports = router;

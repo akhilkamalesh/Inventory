@@ -1,3 +1,0 @@
-Tasks:
-- Create seeder that can read from a JSON file to put into mongoose database
-    - Insert and Delete

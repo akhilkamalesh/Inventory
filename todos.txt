@@ -1,0 +1,6 @@
+Tasks:
+- Users/Authetication
+    - Create authentication middlewear that protects and autheticates routes
+    - Create User routes such as register, login, me
+    - Implement tokens and cookies to store the token so that user info during the session is saved when logged in
+- Set up mongoose database that is not local host (watch example on udemy)

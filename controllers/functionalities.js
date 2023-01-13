@@ -1,3 +1,7 @@
+/*
+    controllers/functionalities.js includes all the methods that handle the functionalities of an inventory system
+ */
+
 const Inventory = require('../schemas/inventory');
 const ErrorResponse = require('../utils/ErrorResponse');
 const asyncHandler = require('../middleware/async');
