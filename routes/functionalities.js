@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const {findInventoryByName, findInventoryByPID, findAll, createInventory, updateInventory, deleteInventory} = require('../controllers/functionalities');
+const {findInventoryByName, findInventoryByPID, findAll, createInventory, updateInventory, deleteInventory, deleteInventoryByLocation, findInventoryByLocation} = require('../controllers/functionalities');
 
 const Inventory = require('../schemas/inventory');
 const advancedResults = require('../middleware/advancedResults');
@@ -23,7 +23,13 @@ router.route('/')
 router.route('/:name/name')
     .get(protect, findInventoryByName);
 
+// findInventoryByPID needs the pid passed into it
 router.route('/:pid/PID')
     .get(protect, findInventoryByPID);
+
+// deleteInventoryByLocation needs the pid passed into it
+router.route('/:location/location')
+    .get(protect, findInventoryByLocation)
+    .delete(protect, authorize('admin'), deleteInventoryByLocation);
 
 module.exports = router;

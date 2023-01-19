@@ -9,7 +9,7 @@ const asyncHandler = require('../middleware/async');
 
 /*
     @desc findInvetory finds the inventory based on req.params.name in the mongoose inventory database
-    Can be searched with name
+    Returns all the inventory with the same name (relates to location)
     @route /api/v1/inventory/:name/name
 */
 
@@ -62,6 +62,33 @@ exports.findInventoryByPID = asyncHandler(async (req, res, next) => {
 });
 
 /*
+    @desc findInventoryByLocation finds the inventory based on req.params.pid in the mongoose inventory database
+    Can be searched with location
+    @route /api/v1/inventory/:location/location
+*/
+
+exports.findInventoryByLocation = asyncHandler(async (req, res, next) => {
+
+    // Console logging for dev
+    console.log("find inventory by location called".blue);
+
+        const query = {"location": req.params.location};
+        const inventory = await Inventory.find(query);
+
+        // With any error, return next to call the next piece of middleware
+        // since errors are now handles with middleware
+        if(!inventory){
+
+            return next(new ErrorResponse(`Inventory was not found with query of ${req.params.location}`, 404)); 
+
+        }
+
+        if(inventory){
+            return res.status(200).json({success: true, body: inventory});
+        }
+});
+
+/*
     @desc findAll returns all the inventory objects in the Inventory collection
 */
 exports.findAll = asyncHandler(async (req, res, next) => {
@@ -80,16 +107,17 @@ exports.createInventory = asyncHandler(async (req, res, next) => {
 
     console.log("create inventory called".blue);
 
+    const query = {"name": req.body.name, "location": req.body.location}
 
-    const query = {"name": req.body.name}
+    let inventory = await Inventory.findOne(query);
 
-    // Making sure there are no duplicate documents since the _id can be different
-    if(await Inventory.find(query)){
+    // Making sure there are no duplicate documents that have same name and location
+    if(inventory){
 
         return next(new ErrorResponse(`Inventory is already in system`, 404))
     }
 
-    const inventory = await Inventory.create(req.body);
+    inventory = await Inventory.create(req.body);
 
     // send 201 since we are creating an entity
     res.status(201).json({
@@ -131,6 +159,7 @@ exports.deleteInventory = asyncHandler(async(req, res, next) => {
 
     const inventory = await Inventory.findByIdAndDelete(req.params.id);
     
+    // Prints inventory that gets deleted
     if(inventory){
         console.log(inventory);
     }
@@ -140,4 +169,28 @@ exports.deleteInventory = asyncHandler(async(req, res, next) => {
     }
 
     res.status(200).json({sucess: true, data: {}});
+});
+
+/*
+    @desc deletes inventory based on location passed in req.params.location
+*/
+exports.deleteInventoryByLocation = asyncHandler(async(req, res, next) => {
+
+    console.log("delete inventory by location".blue);
+
+    const query = {"location": req.params.location}
+
+    const inventory = await Inventory.deleteMany(query);
+
+    if(!inventory){
+        return next(new ErrorResponse(`Inventory was not found with an location of ${req.params.location}`, 404))
+    }
+
+    res.status(200).json({sucess: true, data: {}});
+});
+
+exports.alottInventory = asyncHandler(async(req, res, next) => {
+
+    
+
 });
